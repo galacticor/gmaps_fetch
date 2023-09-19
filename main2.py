@@ -1,9 +1,8 @@
 import requests
 import json
 import time
+from util.constants import API_KEY
 
-# Ganti dengan API key Anda
-api_key = ''
 
 # Koordinat batas wilayah (lat dan long)
 southwest = '-6.832462, 105.210232'  # Koordinat sudut barat daya
@@ -18,7 +17,7 @@ radius = 50000  # Jarak dalam meter
 query = 'sdn'  # Teks yang ingin Anda cari
 
 # URL API Google Place
-url = f'https://maps.googleapis.com/maps/api/place/nearbysearch/json?query={query}&location={location}&radius={radius}&key={api_key}'
+url = f'https://maps.googleapis.com/maps/api/place/nearbysearch/json?query={query}&location={location}&radius={radius}&key={API_KEY}'
 
 # Mengirim permintaan ke API Google
 response = requests.get(url)
@@ -44,8 +43,11 @@ while data['status'] == 'OK':
         # URL API Google Place
         # url = f'https://maps.googleapis.com/maps/api/place/textsearch/json?query={query}&location={location}&radius={radius}&key={api_key}'
     time.sleep(5)
-    next_page_token = data['next_page_token']
+    next_page_token = data.get('next_page_token')
     print(next_page_token)
+    if not next_page_token:
+        break
+
     url = f'https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken={next_page_token}&key={api_key}'
     # Mengirim permintaan ke API Google
     response = requests.get(url)

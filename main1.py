@@ -2,8 +2,8 @@ import requests
 import json
 import time
 
-# Ganti dengan API key Anda
-api_key = ''
+from core.text_search import get_data
+
 
 # Koordinat batas wilayah (lat dan long)
 southwest = '-6.832462, 105.210232'  # Koordinat sudut barat daya
@@ -12,19 +12,28 @@ northeast = '-6.250752, 106.180119'  # Koordinat sudut timur laut
 
 # Koordinat tengah wilayah
 location = '-6.588535,105.795815'
-radius = 50000  # Jarak dalam meter
+radius = 10000  # Jarak dalam meter
 
 # Teks pencarian
 query = 'smp'  # Teks yang ingin Anda cari
 
-# URL API Google Place
-url = f'https://maps.googleapis.com/maps/api/place/textsearch/json?query={query}&location={location}&radius={radius}&key={api_key}'
+data = get_data(query, location, radius)
 
-# Mengirim permintaan ke API Google
-response = requests.get(url)
+def main():
+    locations = [
+        '-6.588535,105.795815',
+    ]
 
-# Mendapatkan data JSON sebagai respons
-data = response.json()
+    for loc in locations:
+        data = get_data(query, loc, radius)
+        if data['status'] == 'OK':
+            for place in data['results']:
+                print(f"Nama Tempat: {place['name']}")
+                print(f"Alamat: {place['formatted_address']}")
+                print(f"Koordinat: Lat {place['geometry']['location']['lat']} Long {place['geometry']['location']['lng']}")
+                print('-' * 50)
+        else:
+            print("Tidak ada hasil ditemukan atau ada masalah dengan permintaan Anda.")
 
 res = []
 while data['status'] == 'OK':
@@ -46,7 +55,7 @@ while data['status'] == 'OK':
     time.sleep(2.5)
     next_page_token = data['next_page_token']
     print(next_page_token)
-    url = f'https://maps.googleapis.com/maps/api/place/textsearch/json?pagetoken={next_page_token}&key={api_key}'
+    url = f'https://maps.googleapis.com/maps/api/place/textsearch/json?pagetoken={next_page_token}&key={API_KEY}'
     # Mengirim permintaan ke API Google
     response = requests.get(url)
 
