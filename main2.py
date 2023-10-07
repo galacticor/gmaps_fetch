@@ -11,7 +11,7 @@ northeast = '-6.250752, 106.180119'  # Koordinat sudut timur laut
 
 # Koordinat tengah wilayah
 location = '-6.588535,105.795815'
-radius = 50000  # Jarak dalam meter
+radius = 10000  # Jarak dalam meter
 
 # Teks pencarian
 query = 'sdn'  # Teks yang ingin Anda cari
@@ -27,7 +27,7 @@ data = response.json()
 
 res = []
 while data['status'] == 'OK':
-    breakpoint()
+    # breakpoint()
     if len(data['results']) == 0:
         break
     
