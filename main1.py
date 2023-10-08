@@ -21,6 +21,12 @@ query = 'sd'  # Teks yang ingin Anda cari
 def main():
     locations = [
         '-6.588535,105.795815',
+        '-6.790689, 105.548599',
+        '-6.560176, 105.672195',
+        '-6.437374, 105.901535',
+        '-6.345936, 106.000411',
+        '-6.689768, 105.823257',
+        '-6.747050, 105.316513',
     ]
 
     res = []
@@ -51,7 +57,7 @@ def main():
             data = get_next_data(next_page_token)
 
         else:
-            print("Tidak ada hasil ditemukan atau ada masalah dengan permintaan Anda.")
+            print(f"Done for location {loc}")
 
     with open(f'./result/data_{query}.csv', 'w') as f:
         f.write('WKT,name,address\n')
