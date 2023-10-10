@@ -13,7 +13,7 @@ northeast = '-6.250752, 106.180119'
 
 # Koordinat tengah wilayah
 location = '-6.588535,105.795815'
-radius = 10000  # Jarak dalam meter
+radius = 5000  # Jarak dalam meter
 
 # Teks pencarian
 query = 'sd'  # Teks yang ingin Anda cari
@@ -32,12 +32,17 @@ def main():
     res = []
     names = set()
 
-    for loc in locations:
+    with open(f'./result/data_{query}.csv', 'w', encoding="utf-8") as f:
+        f.write('WKT,name,address\n')
+
+    for i, loc in enumerate(locations):
         data = get_data(query, loc, radius)
 
         while data['status'] == 'OK':
             if len(data['results']) == 0:
                 break
+
+            new_loc = None
 
             for place in data['results']:
                 place = Place.from_dict(place)
@@ -49,8 +54,14 @@ def main():
                 print_data(place)
 
                 names.add(place.name)
+                new_loc = f"{place.lat},{place.lng}"
+
+                with open(f'./result/data_{query}.csv', 'a', encoding="utf-8") as f:
+                    f.write(f"{place.to_csv()}\n")
 
             print(f"Total: {len(res)}")
+
+            if new_loc is not None: locations.append(new_loc)
 
             time.sleep(2.5)
             next_page_token = data.get('next_page_token')
@@ -58,12 +69,7 @@ def main():
             data = get_next_data(next_page_token)
 
         else:
-            print(f"Done for location {loc}")
-
-    with open(f'./result/data_{query}.csv', 'w', encoding="utf-8") as f:
-        f.write('WKT,name,address\n')
-        for place in res:
-            f.write(f"{place.to_csv()}\n")
+            print(f"Done for location {loc}, left {len(locations) - i - 1} locations")
 
 
 if __name__ == '__main__':
